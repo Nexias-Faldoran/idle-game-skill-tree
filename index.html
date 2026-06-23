@@ -9,11 +9,9 @@
 <body>
     <div class="container">
         <div class="header">
-            <div class="header-top">
-                <h1>⚔️ Skill Tree</h1>
-                <div class="world-clock-toggle">
-                    <button class="clock-toggle-btn" onclick="toggleClockPanel()" title="Toggle World Clock">🌍</button>
-                </div>
+            <h1>⚔️ Skill Tree</h1>
+            <div class="header-controls">
+                <button class="toggle-editor-btn" onclick="toggleEditor()">📝 Edit Tree</button>
             </div>
             <div class="stats">
                 <div class="stat">
@@ -27,135 +25,91 @@
             </div>
         </div>
 
-        <!-- World Clock Panel -->
-        <div class="world-clock-panel" id="worldClockPanel">
-            <div class="clock-panel-header">
-                <h2>🌍 World Clock</h2>
-                <button class="close-btn" onclick="toggleClockPanel()">×</button>
-            </div>
-            <div class="clock-panel-controls">
-                <input 
-                    type="text" 
-                    id="searchInput" 
-                    placeholder="Search time zones..."
-                    class="search-input"
-                >
-                <div class="clock-buttons">
-                    <button class="btn-small" onclick="openAddTimeZoneModal()">+ Add</button>
-                    <button class="btn-small" onclick="resetToDefaults()">Reset</button>
-                </div>
-            </div>
-            <div class="time-zones-grid" id="timeZonesGrid">
-                <!-- Time zone clocks will be inserted here -->
-            </div>
-        </div>
-
-        <div class="skill-tree">
-            <!-- Offense Branch -->
-            <div class="branch offense-branch">
-                <h2 class="branch-title">⚡ Offense</h2>
-                
-                <div class="skill-node" data-skill="slash" data-branch="offense">
-                    <div class="node-header">
-                        <h3>Slash</h3>
-                        <span class="level-badge" id="level-slash">0</span>
-                    </div>
-                    <p class="node-description">Increase melee damage by 5% per level</p>
-                    <div class="node-stats" id="stats-slash">Damage: +0%</div>
-                    <button class="upgrade-btn" onclick="upgradeSkill('slash')">Upgrade</button>
-                </div>
-
-                <div class="skill-node" data-skill="fireball" data-branch="offense">
-                    <div class="node-header">
-                        <h3>Fireball</h3>
-                        <span class="level-badge" id="level-fireball">0</span>
-                    </div>
-                    <p class="node-description">Deal 10 fire damage per level</p>
-                    <div class="node-stats" id="stats-fireball">Damage: 0</div>
-                    <button class="upgrade-btn" onclick="upgradeSkill('fireball')">Upgrade</button>
-                </div>
-
-                <div class="skill-node" data-skill="inferno" data-branch="offense" data-requires="fireball:3">
-                    <div class="node-header">
-                        <h3>Inferno</h3>
-                        <span class="level-badge" id="level-inferno">0</span>
-                    </div>
-                    <p class="node-description">Requires Fireball Lv3. Deal 25 fire damage per level</p>
-                    <div class="node-stats" id="stats-inferno">Damage: 0</div>
-                    <button class="upgrade-btn" onclick="upgradeSkill('inferno')" disabled>Locked</button>
-                </div>
+        <!-- Editor Panel -->
+        <div id="editorPanel" class="editor-panel hidden">
+            <div class="editor-header">
+                <h2>Skill Tree Editor</h2>
+                <button class="close-btn" onclick="toggleEditor()">✕</button>
             </div>
 
-            <!-- Defense Branch -->
-            <div class="branch defense-branch">
-                <h2 class="branch-title">🛡️ Defense</h2>
-                
-                <div class="skill-node" data-skill="armor" data-branch="defense">
-                    <div class="node-header">
-                        <h3>Armor</h3>
-                        <span class="level-badge" id="level-armor">0</span>
+            <div class="editor-content">
+                <!-- Branch Selector -->
+                <div class="editor-section">
+                    <h3>Select Branch</h3>
+                    <div class="branch-selector">
+                        <button class="branch-btn" onclick="selectBranch('offense')">⚡ Offense</button>
+                        <button class="branch-btn" onclick="selectBranch('defense')">🛡️ Defense</button>
+                        <button class="branch-btn" onclick="selectBranch('utility')">✨ Utility</button>
                     </div>
-                    <p class="node-description">Increase defense by 3 per level</p>
-                    <div class="node-stats" id="stats-armor">Defense: +0</div>
-                    <button class="upgrade-btn" onclick="upgradeSkill('armor')">Upgrade</button>
                 </div>
 
-                <div class="skill-node" data-skill="shield" data-branch="defense">
-                    <div class="node-header">
-                        <h3>Shield Mastery</h3>
-                        <span class="level-badge" id="level-shield">0</span>
-                    </div>
-                    <p class="node-description">Block 5% damage per level</p>
-                    <div class="node-stats" id="stats-shield">Block: 0%</div>
-                    <button class="upgrade-btn" onclick="upgradeSkill('shield')">Upgrade</button>
+                <!-- Skills List -->
+                <div class="editor-section">
+                    <h3>Skills in <span id="currentBranch">Offense</span></h3>
+                    <div id="skillsList" class="skills-list"></div>
+                    <button class="add-skill-btn" onclick="addNewSkill()">+ Add Skill</button>
                 </div>
 
-                <div class="skill-node" data-skill="fortitude" data-branch="defense" data-requires="armor:2,shield:2">
-                    <div class="node-header">
-                        <h3>Fortitude</h3>
-                        <span class="level-badge" id="level-fortitude">0</span>
-                    </div>
-                    <p class="node-description">Requires Armor Lv2 & Shield Lv2. Reduce all damage by 2% per level</p>
-                    <div class="node-stats" id="stats-fortitude">Damage Reduction: 0%</div>
-                    <button class="upgrade-btn" onclick="upgradeSkill('fortitude')" disabled>Locked</button>
-                </div>
-            </div>
+                <!-- Skill Editor Form -->
+                <div class="editor-section" id="skillEditorSection" style="display: none;">
+                    <h3>Edit Skill</h3>
+                    <form id="skillEditorForm">
+                        <div class="form-group">
+                            <label>Skill Name</label>
+                            <input type="text" id="editName" placeholder="e.g., Slash" required>
+                        </div>
 
-            <!-- Utility Branch -->
-            <div class="branch utility-branch">
-                <h2 class="branch-title">✨ Utility</h2>
-                
-                <div class="skill-node" data-skill="efficiency" data-branch="utility">
-                    <div class="node-header">
-                        <h3>Efficiency</h3>
-                        <span class="level-badge" id="level-efficiency">0</span>
-                    </div>
-                    <p class="node-description">Generate 2 skill points per level</p>
-                    <div class="node-stats" id="stats-efficiency">Points/s: +0</div>
-                    <button class="upgrade-btn" onclick="upgradeSkill('efficiency')">Upgrade</button>
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea id="editDescription" placeholder="Describe what this skill does" required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Max Level</label>
+                            <input type="number" id="editMaxLevel" min="1" max="100" value="10" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Stat Display (e.g., "Damage: +{level * 5}%")</label>
+                            <input type="text" id="editStatDisplay" placeholder="e.g., Damage: +{level * 5}%" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Formula for Stat Value (e.g., "{level * 5}")</label>
+                            <input type="text" id="editFormula" placeholder="e.g., {level * 5}" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Skill Points Generated (0 if none)</label>
+                            <input type="number" id="editPointsFormula" value="0" min="0" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Prerequisites (leave empty if none)</label>
+                            <div id="prerequisitesList" class="prerequisites-list"></div>
+                            <button type="button" onclick="addPrerequisite()" class="add-prereq-btn">+ Add Requirement</button>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" onclick="saveSkillEdit()" class="save-btn">Save Skill</button>
+                            <button type="button" onclick="cancelSkillEdit()" class="cancel-btn">Cancel</button>
+                            <button type="button" id="deleteSkillBtn" onclick="deleteSkill()" class="delete-btn" style="display: none;">Delete Skill</button>
+                        </div>
+                    </form>
                 </div>
 
-                <div class="skill-node" data-skill="discipline" data-branch="utility">
-                    <div class="node-header">
-                        <h3>Discipline</h3>
-                        <span class="level-badge" id="level-discipline">0</span>
-                    </div>
-                    <p class="node-description">Gain 1 skill point per 10 seconds</p>
-                    <div class="node-stats" id="stats-discipline">Passive: +1 pts/10s</div>
-                    <button class="upgrade-btn" onclick="upgradeSkill('discipline')">Upgrade</button>
-                </div>
-
-                <div class="skill-node" data-skill="mastery" data-branch="utility" data-requires="efficiency:3,discipline:3">
-                    <div class="node-header">
-                        <h3>Mastery</h3>
-                        <span class="level-badge" id="level-mastery">0</span>
-                    </div>
-                    <p class="node-description">Requires Efficiency Lv3 & Discipline Lv3. Gain 10% more skill points</p>
-                    <div class="node-stats" id="stats-mastery">Bonus: +0%</div>
-                    <button class="upgrade-btn" onclick="upgradeSkill('mastery')" disabled>Locked</button>
+                <!-- Export/Import -->
+                <div class="editor-section">
+                    <h3>Backup & Restore</h3>
+                    <button onclick="exportConfig()" class="export-btn">📥 Export Config</button>
+                    <button onclick="importConfigUI()" class="import-btn">📤 Import Config</button>
+                    <input type="file" id="importFile" style="display: none;" accept=".json" onchange="importConfig(event)">
                 </div>
             </div>
         </div>
+
+        <!-- Game View -->
+        <div id="gameView" class="skill-tree" style="display: block;"></div>
 
         <div class="footer">
             <button class="reset-btn" onclick="resetTree()">Reset Tree</button>
@@ -163,50 +117,6 @@
         </div>
     </div>
 
-    <!-- Modal for adding time zones -->
-    <div id="addTimeZoneModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Add Time Zone</h2>
-                <span class="close" onclick="closeAddTimeZoneModal()">&times;</span>
-            </div>
-            <div class="modal-body">
-                <input 
-                    type="text" 
-                    id="timeZoneInput" 
-                    placeholder="Enter time zone (e.g., America/New_York, Asia/Tokyo)..."
-                    class="modal-input"
-                >
-                <div class="timezone-suggestions" id="timezoneSuggestions"></div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-cancel" onclick="closeAddTimeZoneModal()">Cancel</button>
-                <button class="btn btn-confirm" onclick="addTimeZone()">Add</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Time Zone Clock Template (hidden) -->
-    <template id="clockTemplate">
-        <div class="clock-card">
-            <div class="clock-card-header">
-                <h3 class="city-name"></h3>
-                <button class="btn-remove" title="Remove" onclick="removeTimeZone(this)">×</button>
-            </div>
-            <div class="clock-display">
-                <div class="digital-time">
-                    <div class="time-main"></div>
-                    <div class="time-meridiem"></div>
-                </div>
-            </div>
-            <div class="clock-info">
-                <p class="timezone-label"></p>
-                <p class="date-display"></p>
-            </div>
-        </div>
-    </template>
-
     <script src="script.js"></script>
-    <script src="clock-script.js"></script>
 </body>
 </html>
