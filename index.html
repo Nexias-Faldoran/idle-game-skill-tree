@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Idle Game Skill Tree</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚔️ Skill Tree</h1>
+            <div class="stats">
+                <div class="stat">
+                    <span class="stat-label">Skill Points</span>
+                    <span class="stat-value" id="skillPoints">0</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Total Level</span>
+                    <span class="stat-value" id="totalLevel">0</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="skill-tree">
+            <!-- Offense Branch -->
+            <div class="branch offense-branch">
+                <h2 class="branch-title">⚡ Offense</h2>
+                
+                <div class="skill-node" data-skill="slash" data-branch="offense">
+                    <div class="node-header">
+                        <h3>Slash</h3>
+                        <span class="level-badge" id="level-slash">0</span>
+                    </div>
+                    <p class="node-description">Increase melee damage by 5% per level</p>
+                    <div class="node-stats" id="stats-slash">Damage: +0%</div>
+                    <button class="upgrade-btn" onclick="upgradeSkill('slash')">Upgrade</button>
+                </div>
+
+                <div class="skill-node" data-skill="fireball" data-branch="offense">
+                    <div class="node-header">
+                        <h3>Fireball</h3>
+                        <span class="level-badge" id="level-fireball">0</span>
+                    </div>
+                    <p class="node-description">Deal 10 fire damage per level</p>
+                    <div class="node-stats" id="stats-fireball">Damage: 0</div>
+                    <button class="upgrade-btn" onclick="upgradeSkill('fireball')">Upgrade</button>
+                </div>
+
+                <div class="skill-node" data-skill="inferno" data-branch="offense" data-requires="fireball:3">
+                    <div class="node-header">
+                        <h3>Inferno</h3>
+                        <span class="level-badge" id="level-inferno">0</span>
+                    </div>
+                    <p class="node-description">Requires Fireball Lv3. Deal 25 fire damage per level</p>
+                    <div class="node-stats" id="stats-inferno">Damage: 0</div>
+                    <button class="upgrade-btn" onclick="upgradeSkill('inferno')" disabled>Locked</button>
+                </div>
+            </div>
+
+            <!-- Defense Branch -->
+            <div class="branch defense-branch">
+                <h2 class="branch-title">🛡️ Defense</h2>
+                
+                <div class="skill-node" data-skill="armor" data-branch="defense">
+                    <div class="node-header">
+                        <h3>Armor</h3>
+                        <span class="level-badge" id="level-armor">0</span>
+                    </div>
+                    <p class="node-description">Increase defense by 3 per level</p>
+                    <div class="node-stats" id="stats-armor">Defense: +0</div>
+                    <button class="upgrade-btn" onclick="upgradeSkill('armor')">Upgrade</button>
+                </div>
+
+                <div class="skill-node" data-skill="shield" data-branch="defense">
+                    <div class="node-header">
+                        <h3>Shield Mastery</h3>
+                        <span class="level-badge" id="level-shield">0</span>
+                    </div>
+                    <p class="node-description">Block 5% damage per level</p>
+                    <div class="node-stats" id="stats-shield">Block: 0%</div>
+                    <button class="upgrade-btn" onclick="upgradeSkill('shield')">Upgrade</button>
+                </div>
+
+                <div class="skill-node" data-skill="fortitude" data-branch="defense" data-requires="armor:2,shield:2">
+                    <div class="node-header">
+                        <h3>Fortitude</h3>
+                        <span class="level-badge" id="level-fortitude">0</span>
+                    </div>
+                    <p class="node-description">Requires Armor Lv2 & Shield Lv2. Reduce all damage by 2% per level</p>
+                    <div class="node-stats" id="stats-fortitude">Damage Reduction: 0%</div>
+                    <button class="upgrade-btn" onclick="upgradeSkill('fortitude')" disabled>Locked</button>
+                </div>
+            </div>
+
+            <!-- Utility Branch -->
+            <div class="branch utility-branch">
+                <h2 class="branch-title">✨ Utility</h2>
+                
+                <div class="skill-node" data-skill="efficiency" data-branch="utility">
+                    <div class="node-header">
+                        <h3>Efficiency</h3>
+                        <span class="level-badge" id="level-efficiency">0</span>
+                    </div>
+                    <p class="node-description">Generate 2 skill points per level</p>
+                    <div class="node-stats" id="stats-efficiency">Points/s: +0</div>
+                    <button class="upgrade-btn" onclick="upgradeSkill('efficiency')">Upgrade</button>
+                </div>
+
+                <div class="skill-node" data-skill="discipline" data-branch="utility">
+                    <div class="node-header">
+                        <h3>Discipline</h3>
+                        <span class="level-badge" id="level-discipline">0</span>
+                    </div>
+                    <p class="node-description">Gain 1 skill point per 10 seconds</p>
+                    <div class="node-stats" id="stats-discipline">Passive: +1 pts/10s</div>
+                    <button class="upgrade-btn" onclick="upgradeSkill('discipline')">Upgrade</button>
+                </div>
+
+                <div class="skill-node" data-skill="mastery" data-branch="utility" data-requires="efficiency:3,discipline:3">
+                    <div class="node-header">
+                        <h3>Mastery</h3>
+                        <span class="level-badge" id="level-mastery">0</span>
+                    </div>
+                    <p class="node-description">Requires Efficiency Lv3 & Discipline Lv3. Gain 10% more skill points</p>
+                    <div class="node-stats" id="stats-mastery">Bonus: +0%</div>
+                    <button class="upgrade-btn" onclick="upgradeSkill('mastery')" disabled>Locked</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <button class="reset-btn" onclick="resetTree()">Reset Tree</button>
+            <p class="tip">Tip: Some skills require prerequisites to unlock!</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
