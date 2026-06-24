@@ -33,19 +33,48 @@
             </div>
 
             <div class="editor-content">
+                <!-- Class Selector -->
+                <div class="editor-section">
+                    <h3>Select Class</h3>
+                    <div class="class-selector">
+                        <button class="class-btn" onclick="selectClass('mage')">🧙 Mage</button>
+                        <button class="class-btn" onclick="selectClass('warrior')">⚔️ Warrior</button>
+                        <button class="class-btn" onclick="selectClass('rogue')">🗡️ Rogue</button>
+                    </div>
+                </div>
+
                 <!-- Branch Selector -->
                 <div class="editor-section">
-                    <h3>Select Branch</h3>
-                    <div class="branch-selector">
-                        <button class="branch-btn" onclick="selectBranch('offense')">⚡ Offense</button>
-                        <button class="branch-btn" onclick="selectBranch('defense')">🛡️ Defense</button>
-                        <button class="branch-btn" onclick="selectBranch('utility')">✨ Utility</button>
-                    </div>
+                    <h3>Select Branch in <span id="currentClass">Mage</span></h3>
+                    <div class="branch-selector" id="branchSelector"></div>
+                    <button class="add-branch-btn" onclick="addNewBranch()">+ Add Branch</button>
+                </div>
+
+                <!-- Branch Editor Form -->
+                <div class="editor-section" id="branchEditorSection" style="display: none;">
+                    <h3>Edit Branch</h3>
+                    <form id="branchEditorForm">
+                        <div class="form-group">
+                            <label>Branch Name</label>
+                            <input type="text" id="editBranchName" placeholder="e.g., Offense" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Branch Emoji Icon</label>
+                            <input type="text" id="editBranchEmoji" placeholder="e.g., ⚡" maxlength="2" required>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" onclick="saveBranchEdit()" class="save-btn">Save Branch</button>
+                            <button type="button" onclick="cancelBranchEdit()" class="cancel-btn">Cancel</button>
+                            <button type="button" id="deleteBranchBtn" onclick="deleteBranch()" class="delete-btn" style="display: none;">Delete Branch</button>
+                        </div>
+                    </form>
                 </div>
 
                 <!-- Skills List -->
                 <div class="editor-section">
-                    <h3>Skills in <span id="currentBranch">Offense</span></h3>
+                    <h3>Skills in <span id="currentBranch">Branch</span></h3>
                     <div id="skillsList" class="skills-list"></div>
                     <button class="add-skill-btn" onclick="addNewSkill()">+ Add Skill</button>
                 </div>
