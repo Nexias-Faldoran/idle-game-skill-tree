@@ -1,7 +1,8 @@
-// Default skill definitions
+// Default skill tree structure with classes and branches
 const defaultSkillDefinitions = {
     slash: {
         name: 'Slash',
+        class: 'warrior',
         branch: 'offense',
         description: 'Increase melee damage by 5% per level',
         maxLevel: 10,
@@ -12,6 +13,7 @@ const defaultSkillDefinitions = {
     },
     fireball: {
         name: 'Fireball',
+        class: 'mage',
         branch: 'offense',
         description: 'Deal 10 fire damage per level',
         maxLevel: 10,
@@ -22,6 +24,7 @@ const defaultSkillDefinitions = {
     },
     inferno: {
         name: 'Inferno',
+        class: 'mage',
         branch: 'offense',
         description: 'Requires Fireball Lv3. Deal 25 fire damage per level',
         maxLevel: 10,
@@ -32,6 +35,7 @@ const defaultSkillDefinitions = {
     },
     armor: {
         name: 'Armor',
+        class: 'warrior',
         branch: 'defense',
         description: 'Increase defense by 3 per level',
         maxLevel: 10,
@@ -42,6 +46,7 @@ const defaultSkillDefinitions = {
     },
     shield: {
         name: 'Shield Mastery',
+        class: 'warrior',
         branch: 'defense',
         description: 'Block 5% damage per level',
         maxLevel: 10,
@@ -52,6 +57,7 @@ const defaultSkillDefinitions = {
     },
     fortitude: {
         name: 'Fortitude',
+        class: 'warrior',
         branch: 'defense',
         description: 'Requires Armor Lv2 & Shield Lv2. Reduce all damage by 2% per level',
         maxLevel: 10,
@@ -65,6 +71,7 @@ const defaultSkillDefinitions = {
     },
     efficiency: {
         name: 'Efficiency',
+        class: 'rogue',
         branch: 'utility',
         description: 'Generate 2 skill points per level',
         maxLevel: 10,
@@ -75,6 +82,7 @@ const defaultSkillDefinitions = {
     },
     discipline: {
         name: 'Discipline',
+        class: 'mage',
         branch: 'utility',
         description: 'Gain 1 skill point per 10 seconds',
         maxLevel: 10,
@@ -85,6 +93,7 @@ const defaultSkillDefinitions = {
     },
     mastery: {
         name: 'Mastery',
+        class: 'mage',
         branch: 'utility',
         description: 'Requires Efficiency Lv3 & Discipline Lv3. Gain 10% more skill points',
         maxLevel: 10,
@@ -98,21 +107,56 @@ const defaultSkillDefinitions = {
     }
 };
 
+const defaultClassConfig = {
+    warrior: {
+        name: 'Warrior',
+        emoji: '⚔️',
+        branches: {
+            offense: { name: 'Offense', emoji: '⚡', color: '#ff6b6b' },
+            defense: { name: 'Defense', emoji: '🛡️', color: '#4ecdc4' },
+            utility: { name: 'Utility', emoji: '✨', color: '#95e1d3' }
+        }
+    },
+    mage: {
+        name: 'Mage',
+        emoji: '🔮',
+        branches: {
+            offense: { name: 'Offense', emoji: '⚡', color: '#a8dadc' },
+            defense: { name: 'Defense', emoji: '🛡️', color: '#457b9d' },
+            utility: { name: 'Utility', emoji: '✨', color: '#f1faee' }
+        }
+    },
+    rogue: {
+        name: 'Rogue',
+        emoji: '🗡️',
+        branches: {
+            offense: { name: 'Offense', emoji: '⚡', color: '#e76f51' },
+            defense: { name: 'Defense', emoji: '🛡️', color: '#264653' },
+            utility: { name: 'Utility', emoji: '✨', color: '#f4a261' }
+        }
+    }
+};
+
 // Game state
 const gameState = {
     skills: {},
     skillPoints: 0,
-    skillDefinitions: {}
+    skillDefinitions: {},
+    classConfig: {}
 };
 
+let currentClass = 'warrior';
 let currentBranch = 'offense';
 let editingSkill = null;
+let editingClass = null;
+let editingBranch = null;
 
 // Initialize game
 function init() {
     loadGame();
     if (Object.keys(gameState.skillDefinitions).length === 0) {
         gameState.skillDefinitions = JSON.parse(JSON.stringify(defaultSkillDefinitions));
+        gameState.classConfig = JSON.parse(JSON.stringify(defaultClassConfig));
         initializeSkillLevels();
         saveGame();
     }
@@ -239,69 +283,82 @@ function updateLockStates() {
     });
 }
 
-// Render game view
+// Render game view - grouped by class then branch
 function renderGameView() {
     const gameView = document.getElementById('gameView');
-    const branches = ['offense', 'defense', 'utility'];
-    const branchEmojis = { offense: '⚡', defense: '🛡️', utility: '✨' };
-    const branchNames = { offense: 'Offense', defense: 'Defense', utility: 'Utility' };
-
     gameView.innerHTML = '';
 
-    branches.forEach(branchName => {
-        const branch = document.createElement('div');
-        branch.className = 'branch';
+    Object.entries(gameState.classConfig).forEach(([classId, classData]) => {
+        const classDiv = document.createElement('div');
+        classDiv.className = 'class-group';
 
-        const title = document.createElement('h2');
-        title.className = 'branch-title';
-        title.textContent = `${branchEmojis[branchName]} ${branchNames[branchName]}`;
-        branch.appendChild(title);
+        const classTitle = document.createElement('h1');
+        classTitle.className = 'class-title';
+        classTitle.textContent = `${classData.emoji} ${classData.name}`;
+        classDiv.appendChild(classTitle);
 
-        Object.entries(gameState.skillDefinitions).forEach(([skillId, skillDef]) => {
-            if (skillDef.branch === branchName) {
-                const skill = gameState.skills[skillId];
-                const node = document.createElement('div');
-                node.className = 'skill-node';
-                node.setAttribute('data-skill', skillId);
-                node.setAttribute('data-branch', branchName);
+        const branchesContainer = document.createElement('div');
+        branchesContainer.className = 'branches-container';
 
-                const headerDiv = document.createElement('div');
-                headerDiv.className = 'node-header';
+        Object.entries(classData.branches).forEach(([branchId, branchData]) => {
+            const branch = document.createElement('div');
+            branch.className = 'branch';
 
-                const h3 = document.createElement('h3');
-                h3.textContent = skillDef.name;
-                headerDiv.appendChild(h3);
+            const title = document.createElement('h2');
+            title.className = 'branch-title';
+            title.textContent = `${branchData.emoji} ${branchData.name}`;
+            branch.appendChild(title);
 
-                const badge = document.createElement('span');
-                badge.className = 'level-badge';
-                badge.id = `level-${skillId}`;
-                badge.textContent = skill?.level || 0;
-                headerDiv.appendChild(badge);
+            Object.entries(gameState.skillDefinitions).forEach(([skillId, skillDef]) => {
+                if (skillDef.class === classId && skillDef.branch === branchId) {
+                    const skill = gameState.skills[skillId];
+                    const node = document.createElement('div');
+                    node.className = 'skill-node';
+                    node.setAttribute('data-skill', skillId);
+                    node.setAttribute('data-class', classId);
+                    node.setAttribute('data-branch', branchId);
 
-                node.appendChild(headerDiv);
+                    const headerDiv = document.createElement('div');
+                    headerDiv.className = 'node-header';
 
-                const desc = document.createElement('p');
-                desc.className = 'node-description';
-                desc.textContent = skillDef.description;
-                node.appendChild(desc);
+                    const h3 = document.createElement('h3');
+                    h3.textContent = skillDef.name;
+                    headerDiv.appendChild(h3);
 
-                const stats = document.createElement('div');
-                stats.className = 'node-stats';
-                stats.id = `stats-${skillId}`;
-                stats.textContent = formatStatDisplay(skillDef.statDisplay, skill?.level || 0);
-                node.appendChild(stats);
+                    const badge = document.createElement('span');
+                    badge.className = 'level-badge';
+                    badge.id = `level-${skillId}`;
+                    badge.textContent = skill?.level || 0;
+                    headerDiv.appendChild(badge);
 
-                const btn = document.createElement('button');
-                btn.className = 'upgrade-btn';
-                btn.textContent = 'Upgrade';
-                btn.onclick = () => upgradeSkill(skillId);
-                node.appendChild(btn);
+                    node.appendChild(headerDiv);
 
-                branch.appendChild(node);
-            }
+                    const desc = document.createElement('p');
+                    desc.className = 'node-description';
+                    desc.textContent = skillDef.description;
+                    node.appendChild(desc);
+
+                    const stats = document.createElement('div');
+                    stats.className = 'node-stats';
+                    stats.id = `stats-${skillId}`;
+                    stats.textContent = formatStatDisplay(skillDef.statDisplay, skill?.level || 0);
+                    node.appendChild(stats);
+
+                    const btn = document.createElement('button');
+                    btn.className = 'upgrade-btn';
+                    btn.textContent = 'Upgrade';
+                    btn.onclick = () => upgradeSkill(skillId);
+                    node.appendChild(btn);
+
+                    branch.appendChild(node);
+                }
+            });
+
+            branchesContainer.appendChild(branch);
         });
 
-        gameView.appendChild(branch);
+        classDiv.appendChild(branchesContainer);
+        gameView.appendChild(classDiv);
     });
 
     updateLockStates();
@@ -355,6 +412,7 @@ function loadGame() {
         gameState.skillPoints = loaded.skillPoints;
         gameState.skills = loaded.skills;
         gameState.skillDefinitions = loaded.skillDefinitions || {};
+        gameState.classConfig = loaded.classConfig || {};
     }
 }
 
@@ -365,15 +423,54 @@ function toggleEditor() {
     panel.classList.toggle('hidden');
 }
 
-function selectBranch(branch) {
-    currentBranch = branch;
-    document.getElementById('currentBranch').textContent = 
-        branch.charAt(0).toUpperCase() + branch.slice(1);
+function selectClass(classId) {
+    currentClass = classId;
+    currentBranch = Object.keys(gameState.classConfig[classId].branches)[0];
+    document.getElementById('currentClass').textContent = gameState.classConfig[classId].name;
+    
+    document.querySelectorAll('.class-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    event.target.classList.add('active');
+    
+    renderBranchSelector();
+    selectBranch(currentBranch);
+}
+
+function renderBranchSelector() {
+    const selector = document.getElementById('branchSelector');
+    selector.innerHTML = '';
+    
+    Object.entries(gameState.classConfig[currentClass].branches).forEach(([branchId, branchData]) => {
+        const btn = document.createElement('button');
+        btn.className = 'branch-btn';
+        btn.textContent = `${branchData.emoji} ${branchData.name}`;
+        btn.onclick = (e) => {
+            e.preventDefault();
+            selectBranch(branchId);
+        };
+        if (branchId === currentBranch) btn.classList.add('active');
+        selector.appendChild(btn);
+    });
+    
+    const editBtn = document.createElement('button');
+    editBtn.className = 'edit-branches-btn';
+    editBtn.textContent = '⚙️ Edit Branches';
+    editBtn.onclick = (e) => {
+        e.preventDefault();
+        showBranchEditor();
+    };
+    selector.appendChild(editBtn);
+}
+
+function selectBranch(branchId) {
+    currentBranch = branchId;
+    document.getElementById('currentBranch').textContent = gameState.classConfig[currentClass].branches[branchId].name;
     
     document.querySelectorAll('.branch-btn').forEach(btn => {
         btn.classList.remove('active');
     });
-    event.target.classList.add('active');
+    event?.target?.classList.add('active');
     
     renderSkillsList();
 }
@@ -383,7 +480,7 @@ function renderSkillsList() {
     skillsList.innerHTML = '';
 
     Object.entries(gameState.skillDefinitions).forEach(([skillId, skillDef]) => {
-        if (skillDef.branch === currentBranch) {
+        if (skillDef.class === currentClass && skillDef.branch === currentBranch) {
             const item = document.createElement('div');
             item.className = 'skill-item';
             
@@ -506,10 +603,8 @@ function saveSkillEdit() {
 
     let skillId = editingSkill;
     if (!skillId) {
-        // Generate ID from name
         skillId = name.toLowerCase().replace(/\s+/g, '');
         
-        // Check if ID already exists
         if (gameState.skillDefinitions[skillId]) {
             alert('A skill with this name already exists');
             return;
@@ -520,6 +615,7 @@ function saveSkillEdit() {
 
     gameState.skillDefinitions[skillId] = {
         name,
+        class: currentClass,
         branch: currentBranch,
         description,
         maxLevel,
@@ -558,9 +654,132 @@ function deleteSkill() {
     alert('Skill deleted successfully!');
 }
 
+function showBranchEditor() {
+    editingBranch = null;
+    document.getElementById('branchEditorSection').style.display = 'block';
+    renderBranchList();
+}
+
+function renderBranchList() {
+    const list = document.getElementById('branchList');
+    list.innerHTML = '';
+    
+    Object.entries(gameState.classConfig[currentClass].branches).forEach(([branchId, branchData]) => {
+        const item = document.createElement('div');
+        item.className = 'skill-item';
+        
+        const name = document.createElement('span');
+        name.className = 'skill-item-name';
+        name.textContent = `${branchData.emoji} ${branchData.name}`;
+        
+        const btn = document.createElement('button');
+        btn.className = 'skill-item-button';
+        btn.textContent = 'Edit';
+        btn.onclick = (e) => {
+            e.stopPropagation();
+            editBranch(branchId);
+        };
+        
+        item.appendChild(name);
+        item.appendChild(btn);
+        list.appendChild(item);
+    });
+}
+
+function editBranch(branchId) {
+    editingBranch = branchId;
+    const branchData = gameState.classConfig[currentClass].branches[branchId];
+    
+    document.getElementById('editBranchName').value = branchData.name;
+    document.getElementById('editBranchEmoji').value = branchData.emoji;
+    document.getElementById('editBranchColor').value = branchData.color;
+    document.getElementById('deleteBranchBtn').style.display = 'block';
+    document.getElementById('branchFormSection').style.display = 'block';
+}
+
+function addNewBranch() {
+    editingBranch = null;
+    document.getElementById('editBranchName').value = '';
+    document.getElementById('editBranchEmoji').value = '✨';
+    document.getElementById('editBranchColor').value = '#64c8ff';
+    document.getElementById('deleteBranchBtn').style.display = 'none';
+    document.getElementById('branchFormSection').style.display = 'block';
+}
+
+function saveBranchEdit() {
+    const name = document.getElementById('editBranchName').value;
+    const emoji = document.getElementById('editBranchEmoji').value;
+    const color = document.getElementById('editBranchColor').value;
+
+    if (!name || !emoji) {
+        alert('Please fill in all required fields');
+        return;
+    }
+
+    if (!editingBranch) {
+        const branchId = name.toLowerCase().replace(/\s+/g, '');
+        if (gameState.classConfig[currentClass].branches[branchId]) {
+            alert('A branch with this name already exists');
+            return;
+        }
+        editingBranch = branchId;
+    }
+
+    gameState.classConfig[currentClass].branches[editingBranch] = {
+        name,
+        emoji,
+        color
+    };
+
+    saveGame();
+    renderBranchList();
+    renderBranchSelector();
+    renderGameView();
+    cancelBranchEdit();
+    alert('Branch saved successfully!');
+}
+
+function cancelBranchEdit() {
+    document.getElementById('branchFormSection').style.display = 'none';
+    editingBranch = null;
+}
+
+function deleteBranch() {
+    if (!editingBranch || !confirm('Delete this branch? All skills in it will be moved to the first remaining branch.')) {
+        return;
+    }
+
+    const branches = gameState.classConfig[currentClass].branches;
+    const branchIds = Object.keys(branches);
+    
+    if (branchIds.length === 1) {
+        alert('Cannot delete the only branch!');
+        return;
+    }
+
+    const newBranch = branchIds.find(b => b !== editingBranch);
+    
+    // Move skills from deleted branch
+    Object.entries(gameState.skillDefinitions).forEach(([skillId, skillDef]) => {
+        if (skillDef.class === currentClass && skillDef.branch === editingBranch) {
+            skillDef.branch = newBranch;
+        }
+    });
+
+    delete branches[editingBranch];
+    
+    saveGame();
+    renderBranchList();
+    renderBranchSelector();
+    renderGameView();
+    cancelBranchEdit();
+    alert('Branch deleted successfully!');
+}
+
 function exportConfig() {
     const config = {
         skillDefinitions: gameState.skillDefinitions,
+        classConfig: gameState.classConfig,
         timestamp: new Date().toISOString()
     };
 
@@ -587,22 +806,21 @@ function importConfig(event) {
         try {
             const config = JSON.parse(e.target.result);
             
-            if (!config.skillDefinitions) {
+            if (!config.skillDefinitions || !config.classConfig) {
                 alert('Invalid config file format');
                 return;
             }
 
-            // Reset current skills
             gameState.skills = {};
             gameState.skillDefinitions = config.skillDefinitions;
+            gameState.classConfig = config.classConfig;
 
-            // Initialize skill levels
             initializeSkillLevels();
             gameState.skillPoints = 0;
 
             saveGame();
             renderGameView();
-            renderSkillsList();
+            setupEditor();
             alert('Skill tree imported successfully!');
         } catch (error) {
             alert('Error importing config: ' + error.message);
@@ -612,8 +830,7 @@ function importConfig(event) {
 }
 
 function setupEditor() {
-    // Set initial branch
-    selectBranch('offense');
+    selectClass('warrior');
 }
 
 // Start the game
