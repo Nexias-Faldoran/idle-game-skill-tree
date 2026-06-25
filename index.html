@@ -25,6 +25,21 @@
             </div>
         </div>
 
+        <!-- Info Section -->
+        <div class="info-section" id="infoSection">
+            <div class="info-content">
+                <p id="infoText">Welcome to the Skill Tree! Allocate skill points to unlock and upgrade abilities.</p>
+            </div>
+            <button class="edit-info-btn" onclick="toggleInfoEdit()">✏️ Edit</button>
+            <div id="infoEditForm" class="info-edit-form hidden">
+                <textarea id="infoTextarea" placeholder="Enter your game information here..."></textarea>
+                <div class="info-form-actions">
+                    <button onclick="saveInfo()" class="save-info-btn">Save</button>
+                    <button onclick="toggleInfoEdit()" class="cancel-info-btn">Cancel</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Editor Panel -->
         <div id="editorPanel" class="editor-panel hidden">
             <div class="editor-header">
@@ -45,7 +60,7 @@
 
                 <!-- Branch Selector -->
                 <div class="editor-section">
-                    <h3>Select Branch in <span id="currentClass">Mage</span></h3>
+                    <h3>Branches in <span id="currentClass">Mage</span></h3>
                     <div class="branch-selector" id="branchSelector"></div>
                     <button class="add-branch-btn" onclick="addNewBranch()">+ Add Branch</button>
                 </div>
@@ -138,7 +153,7 @@
         </div>
 
         <!-- Game View -->
-        <div id="gameView" class="skill-tree" style="display: block;"></div>
+        <div id="gameView" class="skill-tree-container" style="display: block;"></div>
 
         <div class="footer">
             <button class="reset-btn" onclick="resetTree()">Reset Tree</button>
