@@ -19,7 +19,7 @@ body {
 
 .header {
     text-align: center;
-    margin-bottom: 40px;
+    margin-bottom: 30px;
     padding: 30px;
     background: rgba(255, 255, 255, 0.05);
     border-radius: 10px;
@@ -29,17 +29,20 @@ body {
 
 .header h1 {
     font-size: 2.5em;
-    margin-bottom: 20px;
     text-shadow: 0 0 10px rgba(100, 200, 255, 0.3);
+    margin-bottom: 15px;
 }
 
 .header-controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
     margin-bottom: 20px;
 }
 
 .toggle-editor-btn {
     padding: 10px 20px;
-    background: linear-gradient(135deg, #9c64ff, #7a4aff);
+    background: linear-gradient(135deg, #ffa500, #ff8c00);
     color: #fff;
     border: none;
     border-radius: 5px;
@@ -47,13 +50,11 @@ body {
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s ease;
-    text-transform: uppercase;
-    letter-spacing: 1px;
 }
 
 .toggle-editor-btn:hover {
-    background: linear-gradient(135deg, #b080ff, #9c64ff);
-    box-shadow: 0 0 15px rgba(156, 100, 255, 0.4);
+    background: linear-gradient(135deg, #ffb84d, #ff9933);
+    box-shadow: 0 0 15px rgba(255, 165, 0, 0.4);
     transform: scale(1.05);
 }
 
@@ -84,17 +85,122 @@ body {
     color: #64c8ff;
 }
 
+/* Info Section */
+.info-section {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(100, 200, 255, 0.3);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 30px;
+    backdrop-filter: blur(10px);
+    position: relative;
+}
+
+.info-content {
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+}
+
+.info-content p {
+    color: #d0d0d0;
+    line-height: 1.6;
+    font-size: 0.95em;
+}
+
+.edit-info-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(100, 200, 255, 0.2);
+    border: 1px solid rgba(100, 200, 255, 0.5);
+    color: #64c8ff;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: all 0.3s ease;
+}
+
+.edit-info-btn:hover {
+    background: rgba(100, 200, 255, 0.3);
+    border-color: rgba(100, 200, 255, 0.8);
+    box-shadow: 0 0 10px rgba(100, 200, 255, 0.2);
+}
+
+.info-edit-form {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(100, 200, 255, 0.3);
+}
+
+.info-edit-form.hidden {
+    display: none;
+}
+
+.info-edit-form textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 12px;
+    background: rgba(100, 200, 255, 0.1);
+    border: 1px solid rgba(100, 200, 255, 0.3);
+    border-radius: 5px;
+    color: #e0e0e0;
+    font-family: inherit;
+    resize: vertical;
+    margin-bottom: 10px;
+}
+
+.info-edit-form textarea:focus {
+    outline: none;
+    border-color: rgba(100, 200, 255, 0.8);
+    box-shadow: 0 0 10px rgba(100, 200, 255, 0.2);
+}
+
+.info-form-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.save-info-btn, .cancel-info-btn {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.save-info-btn {
+    background: linear-gradient(135deg, #64c8ff, #4a9cff);
+    color: #fff;
+}
+
+.save-info-btn:hover {
+    background: linear-gradient(135deg, #80d8ff, #64c8ff);
+    box-shadow: 0 0 10px rgba(100, 200, 255, 0.3);
+}
+
+.cancel-info-btn {
+    background: rgba(100, 100, 100, 0.3);
+    color: #a0a0a0;
+    border: 1px solid rgba(100, 100, 100, 0.5);
+}
+
+.cancel-info-btn:hover {
+    background: rgba(100, 100, 100, 0.5);
+    color: #e0e0e0;
+}
+
 /* Editor Panel */
 .editor-panel {
     background: rgba(20, 20, 40, 0.95);
-    border: 2px solid rgba(156, 100, 255, 0.5);
+    border: 2px solid rgba(100, 200, 255, 0.3);
     border-radius: 10px;
-    padding: 30px;
-    margin-bottom: 40px;
-    backdrop-filter: blur(10px);
-    max-height: 800px;
-    overflow-y: auto;
-    box-shadow: 0 0 30px rgba(156, 100, 255, 0.2);
+    margin-bottom: 30px;
+    overflow: hidden;
+    box-shadow: 0 0 30px rgba(100, 200, 255, 0.2);
 }
 
 .editor-panel.hidden {
@@ -105,241 +211,344 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 30px;
-    border-bottom: 2px solid rgba(156, 100, 255, 0.3);
-    padding-bottom: 15px;
+    padding: 20px;
+    background: rgba(100, 200, 255, 0.1);
+    border-bottom: 2px solid rgba(100, 200, 255, 0.3);
 }
 
 .editor-header h2 {
-    color: #9c64ff;
-    font-size: 1.8em;
-    text-shadow: 0 0 10px rgba(156, 100, 255, 0.3);
-}
-
-.close-btn {
-    background: none;
-    border: none;
-    color: #9c64ff;
+    color: #64c8ff;
     font-size: 1.5em;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.close-btn:hover {
-    color: #b080ff;
-    transform: scale(1.2);
 }
 
 .editor-content {
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
+    padding: 20px;
+    max-height: 70vh;
+    overflow-y: auto;
 }
 
 .editor-section {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(156, 100, 255, 0.2);
+    margin-bottom: 25px;
+    padding: 15px;
+    background: rgba(100, 200, 255, 0.05);
+    border: 1px solid rgba(100, 200, 255, 0.2);
     border-radius: 8px;
-    padding: 20px;
 }
 
 .editor-section h3 {
-    color: #9c64ff;
+    color: #64c8ff;
     margin-bottom: 15px;
-    font-size: 1.2em;
+    font-size: 1.1em;
 }
 
-.branch-selector {
+/* Class Selector */
+.class-selector {
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
 }
 
-.branch-btn {
-    padding: 10px 15px;
-    background: rgba(156, 100, 255, 0.2);
-    border: 2px solid rgba(156, 100, 255, 0.3);
-    color: #9c64ff;
+.class-btn {
+    flex: 1;
+    min-width: 100px;
+    padding: 12px;
+    background: rgba(100, 200, 255, 0.1);
+    border: 2px solid rgba(100, 200, 255, 0.3);
+    color: #64c8ff;
     border-radius: 5px;
     cursor: pointer;
-    transition: all 0.3s ease;
     font-weight: bold;
+    font-size: 0.95em;
+    transition: all 0.3s ease;
 }
 
-.branch-btn:hover,
-.branch-btn.active {
-    background: rgba(156, 100, 255, 0.5);
-    border-color: rgba(156, 100, 255, 0.7);
-    box-shadow: 0 0 10px rgba(156, 100, 255, 0.3);
+.class-btn:hover {
+    background: rgba(100, 200, 255, 0.2);
+    border-color: rgba(100, 200, 255, 0.8);
+    box-shadow: 0 0 15px rgba(100, 200, 255, 0.2);
 }
 
-.skills-list {
+.class-btn.active {
+    background: linear-gradient(135deg, #64c8ff, #4a9cff);
+    color: #fff;
+    border-color: rgba(100, 200, 255, 0.8);
+    box-shadow: 0 0 15px rgba(100, 200, 255, 0.4);
+}
+
+/* Branch Selector */
+.branch-selector {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    margin-bottom: 15px;
+    gap: 8px;
+    margin-bottom: 10px;
 }
 
-.skill-item {
-    background: rgba(20, 20, 40, 0.6);
-    border: 1px solid rgba(156, 100, 255, 0.3);
-    padding: 12px 15px;
-    border-radius: 5px;
+.branch-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 12px;
+    background: rgba(100, 200, 255, 0.1);
+    border: 1px solid rgba(100, 200, 255, 0.3);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.branch-item:hover {
+    background: rgba(100, 200, 255, 0.2);
+    border-color: rgba(100, 200, 255, 0.8);
+}
+
+.branch-item.active {
+    background: rgba(100, 200, 255, 0.2);
+    border-color: rgba(100, 200, 255, 0.8);
+    box-shadow: 0 0 10px rgba(100, 200, 255, 0.2);
+}
+
+.branch-name {
+    color: #64c8ff;
+    font-weight: bold;
+}
+
+.branch-actions {
+    display: flex;
+    gap: 5px;
+}
+
+.branch-edit-btn, .branch-delete-btn {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 0.85em;
+    transition: all 0.2s ease;
+}
+
+.branch-edit-btn {
+    background: rgba(100, 200, 255, 0.2);
+    color: #64c8ff;
+    border: 1px solid rgba(100, 200, 255, 0.5);
+}
+
+.branch-edit-btn:hover {
+    background: rgba(100, 200, 255, 0.4);
+    border-color: rgba(100, 200, 255, 0.8);
+}
+
+.branch-delete-btn {
+    background: rgba(255, 100, 100, 0.2);
+    color: #ff6b6b;
+    border: 1px solid rgba(255, 100, 100, 0.5);
+}
+
+.branch-delete-btn:hover {
+    background: rgba(255, 100, 100, 0.4);
+    border-color: rgba(255, 100, 100, 0.8);
+}
+
+.add-branch-btn {
+    width: 100%;
+    padding: 10px;
+    background: rgba(100, 200, 255, 0.2);
+    border: 1px dashed rgba(100, 200, 255, 0.5);
+    color: #64c8ff;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.add-branch-btn:hover {
+    background: rgba(100, 200, 255, 0.4);
+    border-color: rgba(100, 200, 255, 0.8);
+}
+
+/* Skills List */
+.skills-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.skill-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background: rgba(100, 200, 255, 0.08);
+    border: 1px solid rgba(100, 200, 255, 0.2);
+    border-radius: 5px;
     cursor: pointer;
     transition: all 0.3s ease;
 }
 
 .skill-item:hover {
-    background: rgba(20, 20, 40, 0.9);
-    border-color: rgba(156, 100, 255, 0.6);
-    box-shadow: 0 0 10px rgba(156, 100, 255, 0.2);
+    background: rgba(100, 200, 255, 0.15);
+    border-color: rgba(100, 200, 255, 0.6);
 }
 
-.skill-item-name {
-    color: #64c8ff;
+.skill-name {
+    color: #a0c8ff;
     font-weight: bold;
+    flex: 1;
 }
 
-.skill-item-button {
-    background: rgba(156, 100, 255, 0.3);
-    border: 1px solid rgba(156, 100, 255, 0.5);
-    color: #9c64ff;
-    padding: 5px 12px;
+.skill-actions {
+    display: flex;
+    gap: 5px;
+}
+
+.skill-edit-btn, .skill-delete-btn {
+    padding: 5px 10px;
+    border: none;
     border-radius: 3px;
     cursor: pointer;
-    transition: all 0.3s ease;
     font-size: 0.85em;
+    transition: all 0.2s ease;
 }
 
-.skill-item-button:hover {
-    background: rgba(156, 100, 255, 0.6);
+.skill-edit-btn {
+    background: rgba(100, 200, 255, 0.2);
+    color: #64c8ff;
+    border: 1px solid rgba(100, 200, 255, 0.5);
+}
+
+.skill-edit-btn:hover {
+    background: rgba(100, 200, 255, 0.4);
+    border-color: rgba(100, 200, 255, 0.8);
+}
+
+.skill-delete-btn {
+    background: rgba(255, 100, 100, 0.2);
+    color: #ff6b6b;
+    border: 1px solid rgba(255, 100, 100, 0.5);
+}
+
+.skill-delete-btn:hover {
+    background: rgba(255, 100, 100, 0.4);
+    border-color: rgba(255, 100, 100, 0.8);
 }
 
 .add-skill-btn {
     width: 100%;
     padding: 10px;
-    background: linear-gradient(135deg, #9c64ff, #7a4aff);
-    color: #fff;
-    border: none;
+    background: rgba(100, 200, 255, 0.2);
+    border: 1px dashed rgba(100, 200, 255, 0.5);
+    color: #64c8ff;
     border-radius: 5px;
-    font-weight: bold;
     cursor: pointer;
+    font-weight: bold;
     transition: all 0.3s ease;
 }
 
 .add-skill-btn:hover {
-    background: linear-gradient(135deg, #b080ff, #9c64ff);
-    box-shadow: 0 0 10px rgba(156, 100, 255, 0.3);
+    background: rgba(100, 200, 255, 0.4);
+    border-color: rgba(100, 200, 255, 0.8);
 }
 
-/* Form Styles */
-#skillEditorForm {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
+/* Forms */
 .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+    margin-bottom: 12px;
 }
 
 .form-group label {
-    color: #9c64ff;
-    font-weight: bold;
-    font-size: 0.95em;
+    display: block;
+    color: #a0a0a0;
+    font-size: 0.85em;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
 }
 
 .form-group input,
-.form-group textarea {
-    background: rgba(20, 20, 40, 0.6);
-    border: 1px solid rgba(156, 100, 255, 0.3);
-    color: #e0e0e0;
+.form-group textarea,
+.form-group select {
+    width: 100%;
     padding: 10px;
+    background: rgba(100, 200, 255, 0.1);
+    border: 1px solid rgba(100, 200, 255, 0.3);
     border-radius: 5px;
+    color: #e0e0e0;
     font-family: inherit;
-    transition: all 0.3s ease;
 }
 
 .form-group input:focus,
-.form-group textarea:focus {
+.form-group textarea:focus,
+.form-group select:focus {
     outline: none;
-    border-color: rgba(156, 100, 255, 0.7);
-    background: rgba(20, 20, 40, 0.9);
-    box-shadow: 0 0 10px rgba(156, 100, 255, 0.2);
+    border-color: rgba(100, 200, 255, 0.8);
+    box-shadow: 0 0 10px rgba(100, 200, 255, 0.2);
 }
 
 .form-group textarea {
-    min-height: 80px;
     resize: vertical;
+    min-height: 80px;
 }
 
 .prerequisites-list {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
     margin-bottom: 10px;
 }
 
 .prerequisite-item {
     display: flex;
-    gap: 10px;
-    align-items: flex-end;
+    gap: 8px;
+    align-items: center;
 }
 
 .prerequisite-item select,
 .prerequisite-item input {
-    background: rgba(20, 20, 40, 0.6);
-    border: 1px solid rgba(156, 100, 255, 0.3);
-    color: #e0e0e0;
-    padding: 8px;
-    border-radius: 5px;
     flex: 1;
+    padding: 8px;
+    background: rgba(100, 200, 255, 0.1);
+    border: 1px solid rgba(100, 200, 255, 0.3);
+    border-radius: 5px;
+    color: #e0e0e0;
 }
 
 .prerequisite-item button {
-    background: rgba(255, 100, 100, 0.3);
+    padding: 8px 12px;
+    background: rgba(255, 100, 100, 0.2);
     border: 1px solid rgba(255, 100, 100, 0.5);
     color: #ff6b6b;
-    padding: 8px 12px;
     border-radius: 3px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
 }
 
 .prerequisite-item button:hover {
-    background: rgba(255, 100, 100, 0.6);
+    background: rgba(255, 100, 100, 0.4);
+    border-color: rgba(255, 100, 100, 0.8);
 }
 
 .add-prereq-btn {
-    padding: 8px 15px;
-    background: rgba(156, 100, 255, 0.2);
-    border: 1px solid rgba(156, 100, 255, 0.5);
-    color: #9c64ff;
-    border-radius: 3px;
+    width: 100%;
+    padding: 8px;
+    background: rgba(100, 200, 255, 0.15);
+    border: 1px dashed rgba(100, 200, 255, 0.5);
+    color: #64c8ff;
+    border-radius: 5px;
     cursor: pointer;
-    transition: all 0.3s ease;
     font-size: 0.9em;
-    width: fit-content;
+    transition: all 0.3s ease;
 }
 
 .add-prereq-btn:hover {
-    background: rgba(156, 100, 255, 0.4);
+    background: rgba(100, 200, 255, 0.3);
+    border-color: rgba(100, 200, 255, 0.8);
 }
 
 .form-actions {
     display: flex;
     gap: 10px;
-    margin-top: 10px;
+    margin-top: 15px;
 }
 
-.save-btn,
-.cancel-btn,
-.delete-btn {
+.save-btn, .cancel-btn, .delete-btn {
     flex: 1;
     padding: 12px;
     border: none;
@@ -347,8 +556,6 @@ body {
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s ease;
-    text-transform: uppercase;
-    letter-spacing: 1px;
 }
 
 .save-btn {
@@ -358,7 +565,7 @@ body {
 
 .save-btn:hover {
     background: linear-gradient(135deg, #80d8ff, #64c8ff);
-    box-shadow: 0 0 15px rgba(100, 200, 255, 0.4);
+    box-shadow: 0 0 10px rgba(100, 200, 255, 0.3);
 }
 
 .cancel-btn {
@@ -369,6 +576,7 @@ body {
 
 .cancel-btn:hover {
     background: rgba(100, 100, 100, 0.5);
+    color: #e0e0e0;
 }
 
 .delete-btn {
@@ -378,34 +586,66 @@ body {
 
 .delete-btn:hover {
     background: linear-gradient(135deg, #ff8080, #ff6b6b);
-    box-shadow: 0 0 15px rgba(255, 100, 100, 0.4);
+    box-shadow: 0 0 10px rgba(255, 100, 100, 0.3);
 }
 
-.export-btn,
-.import-btn {
-    padding: 10px 15px;
-    background: rgba(100, 200, 200, 0.3);
-    border: 1px solid rgba(100, 200, 200, 0.5);
-    color: #64d8d8;
+/* Export/Import Buttons */
+.export-btn, .import-btn {
+    width: 48%;
+    padding: 10px;
+    border: none;
     border-radius: 5px;
+    font-weight: bold;
     cursor: pointer;
     transition: all 0.3s ease;
-    margin-right: 10px;
-    font-weight: bold;
+    display: inline-block;
 }
 
-.export-btn:hover,
+.export-btn {
+    background: linear-gradient(135deg, #64c8ff, #4a9cff);
+    color: #fff;
+    margin-right: 4%;
+}
+
+.export-btn:hover {
+    background: linear-gradient(135deg, #80d8ff, #64c8ff);
+    box-shadow: 0 0 10px rgba(100, 200, 255, 0.3);
+}
+
+.import-btn {
+    background: linear-gradient(135deg, #a064ff, #8a4aff);
+    color: #fff;
+}
+
 .import-btn:hover {
-    background: rgba(100, 200, 200, 0.6);
-    box-shadow: 0 0 10px rgba(100, 200, 200, 0.3);
+    background: linear-gradient(135deg, #b080ff, #a064ff);
+    box-shadow: 0 0 10px rgba(160, 100, 255, 0.3);
 }
 
-/* Game View */
+/* Skill Tree Container */
+.skill-tree-container {
+    display: block;
+}
+
+.class-group {
+    margin-bottom: 40px;
+}
+
+.class-title {
+    font-size: 1.8em;
+    color: #64c8ff;
+    text-shadow: 0 0 10px rgba(100, 200, 255, 0.3);
+    margin-bottom: 20px;
+    text-align: center;
+    padding-bottom: 15px;
+    border-bottom: 2px solid rgba(100, 200, 255, 0.3);
+}
+
 .skill-tree {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
     gap: 30px;
-    margin-bottom: 40px;
+    margin-bottom: 20px;
 }
 
 .branch {
@@ -558,6 +798,20 @@ body {
     font-style: italic;
 }
 
+.close-btn {
+    background: none;
+    border: none;
+    color: #64c8ff;
+    font-size: 1.5em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.close-btn:hover {
+    color: #80d8ff;
+    transform: scale(1.2);
+}
+
 @media (max-width: 768px) {
     .header h1 {
         font-size: 1.8em;
@@ -576,20 +830,25 @@ body {
         gap: 15px;
     }
 
-    .editor-panel {
+    .header-controls {
+        flex-direction: column;
+    }
+
+    .editor-content {
         max-height: none;
-        overflow-y: visible;
     }
 
-    .branch-selector {
-        flex-direction: column;
-    }
-
-    .branch-btn {
+    .export-btn, .import-btn {
         width: 100%;
+        margin-right: 0;
+        margin-bottom: 10px;
     }
 
-    .form-actions {
+    .class-selector {
         flex-direction: column;
+    }
+
+    .class-btn {
+        width: 100%;
     }
 }
