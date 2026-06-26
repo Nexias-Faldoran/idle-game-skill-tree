@@ -37,15 +37,65 @@ const gameState = {
         warrior: {
             name: 'Warrior',
             branches: {
-                offense: { name: 'Offense', emoji: '⚔️', skills: {} },
-                defense: { name: 'Defense', emoji: '🛡️', skills: {} }
+                offense: {
+                    name: 'Offense',
+                    emoji: '⚔️',
+                    skills: {
+                        slash: { level: 0, description: 'Quick melee attack', maxLevel: 10, statDisplay: 'Damage: {level * 8}', formula: '{level * 8}', pointsFormula: 0, prerequisites: [] },
+                        cleave: { level: 0, description: 'AOE attack hitting multiple enemies', maxLevel: 10, statDisplay: 'Damage: {level * 15}', formula: '{level * 15}', pointsFormula: 0, prerequisites: [{ skill: 'slash', level: 2 }] },
+                        whirlwind: { level: 0, description: 'Requires Cleave Lv3. Spin attack with increased damage', maxLevel: 10, statDisplay: 'Damage: {level * 30}', formula: '{level * 30}', pointsFormula: 0, prerequisites: [{ skill: 'cleave', level: 3 }] }
+                    }
+                },
+                defense: {
+                    name: 'Defense',
+                    emoji: '🛡️',
+                    skills: {
+                        toughness: { level: 0, description: 'Increase max health by 10 per level', maxLevel: 10, statDisplay: 'Health: +{level * 10}', formula: '{level * 10}', pointsFormula: 0, prerequisites: [] },
+                        block: { level: 0, description: 'Block 8% of incoming damage', maxLevel: 10, statDisplay: 'Block: {level * 8}%', formula: '{level * 8}', pointsFormula: 0, prerequisites: [] },
+                        ironSkin: { level: 0, description: 'Requires Toughness Lv3 & Block Lv3. Reduce damage by 3% per level', maxLevel: 10, statDisplay: 'Reduction: {level * 3}%', formula: '{level * 3}', pointsFormula: 0, prerequisites: [{ skill: 'toughness', level: 3 }, { skill: 'block', level: 3 }] }
+                    }
+                },
+                utility: {
+                    name: 'Utility',
+                    emoji: '⚡',
+                    skills: {
+                        stamina: { level: 0, description: 'Gain 1 stamina per level for ability usage', maxLevel: 10, statDisplay: 'Stamina: +{level}', formula: '{level}', pointsFormula: 0, prerequisites: [] },
+                        endurance: { level: 0, description: 'Passive regeneration +1 HP per second', maxLevel: 10, statDisplay: 'Regen: +{level} HP/s', formula: '{level}', pointsFormula: 0, prerequisites: [] },
+                        legendary: { level: 0, description: 'Requires Stamina Lv3 & Endurance Lv3. Become legendary warrior', maxLevel: 10, statDisplay: 'Power: +{level * 5}%', formula: '{level * 5}', pointsFormula: 0, prerequisites: [{ skill: 'stamina', level: 3 }, { skill: 'endurance', level: 3 }] }
+                    }
+                }
             }
         },
         rogue: {
             name: 'Rogue',
             branches: {
-                offense: { name: 'Offense', emoji: '🗡️', skills: {} },
-                utility: { name: 'Utility', emoji: '🎭', skills: {} }
+                offense: {
+                    name: 'Offense',
+                    emoji: '🗡️',
+                    skills: {
+                        dagger: { level: 0, description: 'Swift dagger strikes for quick damage', maxLevel: 10, statDisplay: 'Damage: {level * 6}', formula: '{level * 6}', pointsFormula: 0, prerequisites: [] },
+                        poison: { level: 0, description: 'Coat weapons with deadly poison', maxLevel: 10, statDisplay: 'DoT: {level * 4} per turn', formula: '{level * 4}', pointsFormula: 0, prerequisites: [{ skill: 'dagger', level: 2 }] },
+                        deathblow: { level: 0, description: 'Requires Poison Lv3. Guaranteed critical strike', maxLevel: 10, statDisplay: 'Crit: {level * 20}%', formula: '{level * 20}', pointsFormula: 0, prerequisites: [{ skill: 'poison', level: 3 }] }
+                    }
+                },
+                utility: {
+                    name: 'Utility',
+                    emoji: '🎭',
+                    skills: {
+                        stealth: { level: 0, description: 'Hide in shadows gaining evasion', maxLevel: 10, statDisplay: 'Evasion: +{level * 3}%', formula: '{level * 3}', pointsFormula: 0, prerequisites: [] },
+                        agility: { level: 0, description: 'Increase dodge chance by 2% per level', maxLevel: 10, statDisplay: 'Dodge: +{level * 2}%', formula: '{level * 2}', pointsFormula: 0, prerequisites: [] },
+                        shadowMaster: { level: 0, description: 'Requires Stealth Lv3 & Agility Lv3. Master of shadows', maxLevel: 10, statDisplay: 'Shadow Power: +{level * 7}%', formula: '{level * 7}', pointsFormula: 0, prerequisites: [{ skill: 'stealth', level: 3 }, { skill: 'agility', level: 3 }] }
+                    }
+                },
+                strategy: {
+                    name: 'Strategy',
+                    emoji: '🧠',
+                    skills: {
+                        planning: { level: 0, description: 'Gain skill points through preparation', maxLevel: 10, statDisplay: 'Points: +{level}', formula: '{level}', pointsFormula: '{level}', prerequisites: [] },
+                        cunning: { level: 0, description: 'Outsmart enemies for damage boost', maxLevel: 10, statDisplay: 'Boost: +{level * 4}%', formula: '{level * 4}', pointsFormula: 0, prerequisites: [] },
+                        mastermind: { level: 0, description: 'Requires Planning Lv3 & Cunning Lv3. Ultimate strategy master', maxLevel: 10, statDisplay: 'Master: +{level * 8}%', formula: '{level * 8}', pointsFormula: 0, prerequisites: [{ skill: 'planning', level: 3 }, { skill: 'cunning', level: 3 }] }
+                    }
+                }
             }
         }
     },
@@ -64,50 +114,44 @@ function init() {
     setInterval(generateActiveIncome, 1000);
 }
 
-// Select class
-function selectClass(className) {
-    gameState.currentClass = className;
-    document.querySelectorAll('.class-btn').forEach(btn => btn.classList.remove('active'));
-    event.target.classList.add('active');
-    renderGame();
-    renderBranchSelector();
-    saveGame();
-}
-
-// Render game based on current class
+// Render all classes at once
 function renderGame() {
     const gameView = document.getElementById('gameView');
-    const classData = gameState.classes[gameState.currentClass];
+    let html = '';
     
-    let html = `<div class="class-group">
-        <h2 class="class-title">${classData.name} - Skill Tree</h2>
-        <div class="skill-tree">`;
-    
-    for (const [branchKey, branch] of Object.entries(classData.branches)) {
-        html += `<div class="branch">
-            <h2 class="branch-title">${branch.emoji} ${branch.name}</h2>`;
+    // Render all three classes
+    for (const [classKey, classData] of Object.entries(gameState.classes)) {
+        html += `<div class="class-group">
+            <h2 class="class-title">${classData.name} - Skill Tree</h2>
+            <div class="skill-tree">`;
         
-        for (const [skillKey, skill] of Object.entries(branch.skills)) {
-            const isLocked = !checkPrerequisites(skillKey);
-            const isMaxed = skill.level >= skill.maxLevel;
-            const btnDisabled = isLocked || isMaxed;
-            const btnText = isMaxed ? 'Max Level' : isLocked ? 'Locked' : 'Upgrade';
+        for (const [branchKey, branch] of Object.entries(classData.branches)) {
+            html += `<div class="branch">
+                <h2 class="branch-title">${branch.emoji} ${branch.name}</h2>`;
             
-            html += `<div class="skill-node" data-skill="${skillKey}">
-                <div class="node-header">
-                    <h3>${skillKey.charAt(0).toUpperCase() + skillKey.slice(1)}</h3>
-                    <span class="level-badge" id="level-${skillKey}">${skill.level}</span>
-                </div>
-                <p class="node-description">${skill.description}</p>
-                <div class="node-stats" id="stats-${skillKey}">${evaluateStat(skill, skillKey)}</div>
-                <button class="upgrade-btn" onclick="upgradeSkill('${skillKey}')" ${btnDisabled ? 'disabled' : ''}>${btnText}</button>
-            </div>`;
+            for (const [skillKey, skill] of Object.entries(branch.skills)) {
+                const isLocked = !checkPrerequisites(classKey, skillKey);
+                const isMaxed = skill.level >= skill.maxLevel;
+                const btnDisabled = isLocked || isMaxed;
+                const btnText = isMaxed ? 'Max Level' : isLocked ? 'Locked' : 'Upgrade';
+                
+                html += `<div class="skill-node" data-class="${classKey}" data-skill="${skillKey}">
+                    <div class="node-header">
+                        <h3>${skillKey.charAt(0).toUpperCase() + skillKey.slice(1)}</h3>
+                        <span class="level-badge" id="level-${classKey}-${skillKey}">${skill.level}</span>
+                    </div>
+                    <p class="node-description">${skill.description}</p>
+                    <div class="node-stats" id="stats-${classKey}-${skillKey}">${evaluateStat(skill, skillKey)}</div>
+                    <button class="upgrade-btn" onclick="upgradeSkill('${classKey}', '${skillKey}')" ${btnDisabled ? 'disabled' : ''}>${btnText}</button>
+                </div>`;
+            }
+            
+            html += `</div>`;
         }
         
-        html += `</div>`;
+        html += `</div></div>`;
     }
     
-    html += `</div></div>`;
     gameView.innerHTML = html;
 }
 
@@ -129,9 +173,9 @@ function evaluateStat(skill, skillKey) {
     }
 }
 
-// Get all skills for current class
-function getAllSkills() {
-    const classData = gameState.classes[gameState.currentClass];
+// Get all skills for a class
+function getAllSkillsForClass(classKey) {
+    const classData = gameState.classes[classKey];
     const allSkills = {};
     
     for (const branch of Object.values(classData.branches)) {
@@ -141,9 +185,14 @@ function getAllSkills() {
     return allSkills;
 }
 
-// Check prerequisites
-function checkPrerequisites(skillKey) {
-    const allSkills = getAllSkills();
+// Get all skills for current class (for editor)
+function getAllSkills() {
+    return getAllSkillsForClass(gameState.currentClass);
+}
+
+// Check prerequisites for a specific class
+function checkPrerequisites(classKey, skillKey) {
+    const allSkills = getAllSkillsForClass(classKey);
     const skill = allSkills[skillKey];
     
     if (!skill || !skill.prerequisites || skill.prerequisites.length === 0) {
@@ -156,46 +205,47 @@ function checkPrerequisites(skillKey) {
     });
 }
 
-// Upgrade skill
-function upgradeSkill(skillKey) {
-    const allSkills = getAllSkills();
+// Upgrade skill for a specific class
+function upgradeSkill(classKey, skillKey) {
+    const allSkills = getAllSkillsForClass(classKey);
     const skill = allSkills[skillKey];
     
-    if (!skill || skill.level >= skill.maxLevel || !checkPrerequisites(skillKey)) {
+    if (!skill || skill.level >= skill.maxLevel || !checkPrerequisites(classKey, skillKey)) {
         return;
     }
     
     skill.level++;
     gameState.skillPoints++;
     
-    updateSkillDisplay(skillKey);
+    updateSkillDisplay(classKey, skillKey);
     updateStats();
     updateLockStates();
-    renderGame();
     saveGame();
 }
 
 // Update skill display
-function updateSkillDisplay(skillKey) {
-    const allSkills = getAllSkills();
+function updateSkillDisplay(classKey, skillKey) {
+    const allSkills = getAllSkillsForClass(classKey);
     const skill = allSkills[skillKey];
     
-    if (document.getElementById(`level-${skillKey}`)) {
-        document.getElementById(`level-${skillKey}`).textContent = skill.level;
+    if (document.getElementById(`level-${classKey}-${skillKey}`)) {
+        document.getElementById(`level-${classKey}-${skillKey}`).textContent = skill.level;
     }
-    if (document.getElementById(`stats-${skillKey}`)) {
-        document.getElementById(`stats-${skillKey}`).textContent = evaluateStat(skill, skillKey);
+    if (document.getElementById(`stats-${classKey}-${skillKey}`)) {
+        document.getElementById(`stats-${classKey}-${skillKey}`).textContent = evaluateStat(skill, skillKey);
     }
 }
 
 // Update stats display
 function updateStats() {
     let totalLevel = 0;
-    const classData = gameState.classes[gameState.currentClass];
     
-    for (const branch of Object.values(classData.branches)) {
-        for (const skill of Object.values(branch.skills)) {
-            totalLevel += skill.level;
+    // Count levels from all classes
+    for (const classData of Object.values(gameState.classes)) {
+        for (const branch of Object.values(classData.branches)) {
+            for (const skill of Object.values(branch.skills)) {
+                totalLevel += skill.level;
+            }
         }
     }
     
@@ -205,37 +255,39 @@ function updateStats() {
 
 // Update lock states
 function updateLockStates() {
-    const allSkills = getAllSkills();
-    
-    Object.keys(allSkills).forEach(skillKey => {
-        const btn = document.querySelector(`[data-skill="${skillKey}"] .upgrade-btn`);
-        if (!btn) return;
+    for (const [classKey, classData] of Object.entries(gameState.classes)) {
+        const allSkills = getAllSkillsForClass(classKey);
         
-        const skill = allSkills[skillKey];
-        const prerequisitesMet = checkPrerequisites(skillKey);
-        const maxLevelReached = skill.level >= skill.maxLevel;
-        
-        if (maxLevelReached) {
-            btn.textContent = 'Max Level';
-            btn.disabled = true;
-        } else if (!prerequisitesMet) {
-            btn.textContent = 'Locked';
-            btn.disabled = true;
-        } else {
-            btn.textContent = 'Upgrade';
-            btn.disabled = false;
-        }
-    });
+        Object.keys(allSkills).forEach(skillKey => {
+            const btn = document.querySelector(`[data-class="${classKey}"][data-skill="${skillKey}"] .upgrade-btn`);
+            if (!btn) return;
+            
+            const skill = allSkills[skillKey];
+            const prerequisitesMet = checkPrerequisites(classKey, skillKey);
+            const maxLevelReached = skill.level >= skill.maxLevel;
+            
+            if (maxLevelReached) {
+                btn.textContent = 'Max Level';
+                btn.disabled = true;
+            } else if (!prerequisitesMet) {
+                btn.textContent = 'Locked';
+                btn.disabled = true;
+            } else {
+                btn.textContent = 'Upgrade';
+                btn.disabled = false;
+            }
+        });
+    }
 }
 
 // Reset tree
 function resetTree() {
-    if (confirm('Are you sure you want to reset the skill tree? This cannot be undone!')) {
-        const classData = gameState.classes[gameState.currentClass];
-        
-        for (const branch of Object.values(classData.branches)) {
-            for (const skill of Object.values(branch.skills)) {
-                skill.level = 0;
+    if (confirm('Are you sure you want to reset all skill trees? This cannot be undone!')) {
+        for (const classData of Object.values(gameState.classes)) {
+            for (const branch of Object.values(classData.branches)) {
+                for (const skill of Object.values(branch.skills)) {
+                    skill.level = 0;
+                }
             }
         }
         
@@ -249,26 +301,34 @@ function resetTree() {
 
 // Passive income
 function generatePassiveIncome() {
-    const allSkills = getAllSkills();
-    const disciplineSkill = allSkills.discipline;
-    
-    if (disciplineSkill && disciplineSkill.level > 0) {
-        gameState.skillPoints += disciplineSkill.level;
-        updateStats();
+    // Get all classes' discipline skills
+    for (const [classKey, classData] of Object.entries(gameState.classes)) {
+        const allSkills = getAllSkillsForClass(classKey);
+        const disciplineSkill = allSkills.discipline;
+        
+        if (disciplineSkill && disciplineSkill.level > 0) {
+            gameState.skillPoints += disciplineSkill.level;
+        }
     }
+    
+    updateStats();
 }
 
 // Active income
 function generateActiveIncome() {
-    const allSkills = getAllSkills();
-    const efficiencySkill = allSkills.efficiency;
-    const masterySkill = allSkills.mastery;
-    
-    if (efficiencySkill && efficiencySkill.level > 0) {
-        const bonus = masterySkill ? gameState.skillPoints * (masterySkill.level * 0.1) : 0;
-        gameState.skillPoints += efficiencySkill.level * 2 + bonus;
-        updateStats();
+    // Get all classes' efficiency and mastery skills
+    for (const [classKey, classData] of Object.entries(gameState.classes)) {
+        const allSkills = getAllSkillsForClass(classKey);
+        const efficiencySkill = allSkills.efficiency;
+        const masterySkill = allSkills.mastery;
+        
+        if (efficiencySkill && efficiencySkill.level > 0) {
+            const bonus = masterySkill ? gameState.skillPoints * (masterySkill.level * 0.1) : 0;
+            gameState.skillPoints += efficiencySkill.level * 2 + bonus;
+        }
     }
+    
+    updateStats();
 }
 
 // Info section functions
